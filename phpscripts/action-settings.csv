@@ -1,8 +1,6 @@
-# version: 1
-# "action";"command";"option prefixes";"option suffixes";"kill command"
-"www1";"chromium";"--fullscreen";"-egal";"/usr/bin/pkill chromium"
 "video1";"omxplayer";"-b -live";" ";"/usr/bin/killall omxplayer.bin"
-"audio1";"omxplayer";" ";" ";"/usr/bin/killall omxplayer.bin"
-"audio2";"cvlc";" ";" ";"/usr/bin/killall cvlc"
-"vncserver1";"vncserver";" ";" ";"/usr/bin/vncserver-x11 -stop"
-"vncclient1";"vncviewer";" ";" ";"/usr/bin/killall vncviewer"
+"audio1";"cvlc";" ";" ";"/usr/bin/killall vlc"
+"vncclient1";"xtightvncviewer";" ";" ";"/usr/bin/killall xtightvncviewer"
+"vncserver1";"xtightvncviewer";"-fullscreen -listen";" ";"/usr/bin/killall xtightvncviewer"
+"www1";"chromium";"--incognito";" ";"/usr/bin/pkill chromium"
+# phpds,version=1

@@ -43,7 +43,7 @@ my $sleepTimeBeforeRetry=5;                                 # seconds to sleep f
 my $csvFileToRead='./phpscripts/plan.csv';                  # the csv file actions, parameters, start and stop times
 my $settingsFileToRead='./phpscripts/action-settings.csv';  # a csv file with actions settings
 my $killWith=3;                                             # 1 by PID; 2 by command ; 3 by PID and command
-my $DEBUG=2;                                                # define the output level
+my $DEBUG=1;                                                # define the debug output level (0, 1 or 2)
 my %actionProgramMap;
 my %programOptionPrefix;
 my %programOptionSuffix;
@@ -320,7 +320,8 @@ sub startAction
         my $defaultPrefixProgram=$programOptionPrefix{$actionName};
         my $userOptionsProgram=$curActiveCsvLines[$index][4];
         my $defaultSuffixProgram=$programOptionSuffix{$actionName};
-        if ($DEBUG>=2) { print "START: $programToStart $defaultPrefixProgram '$userOptionsProgram' $defaultSuffixProgram\n"; }
+        
+        if ($DEBUG>=1) { print "START: $programToStart $defaultPrefixProgram $userOptionsProgram $defaultSuffixProgram\n"; }
     
         # return >=0 if successful or undef if not successful
         my $pid = fork();
@@ -329,13 +330,14 @@ sub startAction
         if ($pid == 0)
         {
             # with exec (instead of system) to parent process can kill the child process 2
-            exec "$programToStart $defaultPrefixProgram '$userOptionsProgram' $defaultSuffixProgram; exit";
+            if ( "$userOptionsProgram" eq " " ) { exec "$programToStart $defaultPrefixProgram $defaultSuffixProgram; exit"; }
+            else { exec "$programToStart $defaultPrefixProgram '$userOptionsProgram' $defaultSuffixProgram; exit"; }
         }
         else
         {
             # run this if this is the parent process
             $pidsOfActions[$index]=$pid;
-            if ($DEBUG>=2) { print "DEBUG: The new actions was started with the PID $pid in the background.\n"; }
+            if ($DEBUG>=1) { print "DEBUG: The new actions was started with the PID $pid in the background.\n"; }
         }
     }
 }
