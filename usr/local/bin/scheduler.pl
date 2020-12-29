@@ -39,11 +39,11 @@
 # settings
 #
 
-my $sleepTimeBeforeRetry=5;                                 # seconds to sleep for the next loop
-my $csvFileToRead='./phpscripts/plan.csv';                  # the csv file actions, parameters, start and stop times
-my $settingsFileToRead='./phpscripts/action-settings.csv';  # a csv file with actions settings
-my $killWith=3;                                             # 1 by PID; 2 by command ; 3 by PID and command
-my $DEBUG=1;                                                # define the debug output level (0, 1 or 2)
+my $sleepTimeBeforeRetry=5;                                         # seconds to sleep for the next loop
+my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
+my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
+my $killWith=3;                                                     # 1 by PID; 2 by command ; 3 by PID and command
+my $DEBUG=1;                                                        # define the debug output level (0, 1 or 2)
 my %actionProgramMap;
 my %programOptionPrefix;
 my %programOptionSuffix;
