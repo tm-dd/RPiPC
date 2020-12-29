@@ -34,6 +34,8 @@ ConditionFileIsExecutable=/usr/local/bin/scheduler.pl
 
 [Service]
 Type=simple
+User=pi
+Group=pi
 ExecStart=/usr/local/bin/scheduler.pl
 Restart=on-failure
 RestartSec=10
