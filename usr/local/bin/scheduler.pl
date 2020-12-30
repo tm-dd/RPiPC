@@ -40,6 +40,7 @@
 #
 
 my $sleepTimeBeforeRetry=5;                                         # seconds to sleep for the next loop
+my $display=':0';                                                   # set $DISPLAY for commands
 my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
 my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
 my $killWith=3;                                                     # 1 by PID; 2 by command ; 3 by PID and command
@@ -321,7 +322,7 @@ sub startAction
         my $userOptionsProgram=$curActiveCsvLines[$index][4];
         my $defaultSuffixProgram=$programOptionSuffix{$actionName};
         
-        if ($DEBUG>=1) { print "START: $programToStart $defaultPrefixProgram $userOptionsProgram $defaultSuffixProgram\n"; }
+        if ($DEBUG>=1) { print "START: export DISPLAY=$display; $programToStart $defaultPrefixProgram $userOptionsProgram $defaultSuffixProgram\n"; }
     
         # return >=0 if successful or undef if not successful
         my $pid = fork();
@@ -330,8 +331,8 @@ sub startAction
         if ($pid == 0)
         {
             # with exec (instead of system) to parent process can kill the child process 2
-            if ( "$userOptionsProgram" eq " " ) { exec "$programToStart $defaultPrefixProgram $defaultSuffixProgram; exit"; }
-            else { exec "$programToStart $defaultPrefixProgram '$userOptionsProgram' $defaultSuffixProgram; exit"; }
+            if ( "$userOptionsProgram" eq " " ) { exec "export DISPLAY=$display; $programToStart $defaultPrefixProgram $defaultSuffixProgram; exit"; }
+            else { exec "export DISPLAY=$display; $programToStart $defaultPrefixProgram '$userOptionsProgram' $defaultSuffixProgram; exit"; }
         }
         else
         {
