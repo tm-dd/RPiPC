@@ -1,6 +1,6 @@
-"video1";"omxplayer";"-b -live";" ";"/usr/bin/killall omxplayer.bin"
-"audio1";"cvlc";" ";" ";"/usr/bin/killall vlc"
-"vncclient1";"xtightvncviewer";" ";" ";"/usr/bin/killall xtightvncviewer"
-"vncserver1";"xtightvncviewer";"-fullscreen -listen";" ";"/usr/bin/killall xtightvncviewer"
-"www1";"chromium";"--incognito";" ";"/usr/bin/pkill chromium"
-# phpds,version=1
+"vnclisten";"xtightvncviewer";"-fullscreen -listen";" ";"/usr/bin/killall xtightvncviewer"
+"video";"omxplayer";"-b -live";" ";"/usr/bin/killall omxplayer.bin"
+"audio";"cvlc";" ";" ";"/usr/bin/killall vlc"
+"vncview";"xtightvncviewer";" -fullscreen";" ";"/usr/bin/killall xtightvncviewer"
+"www";"chromium-browser";"--force-device-scale-factor=1.00 --incognito --kiosk";" ";"/usr/bin/pkill chromium"
+# rpipc,version=1
