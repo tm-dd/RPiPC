@@ -86,6 +86,10 @@ Install tightvncviewer to try/use the vlc examples action types:
 
     pi@raspberrypi:~ $ sudo apt install xtightvncviewer
 
+Optional to use AirPlay, install the AirPlay Server:
+
+    Install the AirPlay server with the instructions from: https://github.com/FD-/RPiPlay
+
 Optional settings:
 
     - protect the PHP scripts with htaccess based password protection

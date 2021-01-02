@@ -3,4 +3,5 @@
 "audio";"cvlc";" ";" ";"/usr/bin/killall vlc"
 "vncview";"xtightvncviewer";" -fullscreen";" ";"/usr/bin/killall xtightvncviewer"
 "www";"chromium-browser";"--force-device-scale-factor=1.00 --incognito --kiosk";" ";"/usr/bin/pkill chromium"
+"airplay";"/usr/local/bin/rpiplay";" -n RPiPC -b on -a hdmi";" ";"/usr/bin/killall rpiplay"
 # rpipc,version=1
