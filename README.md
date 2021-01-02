@@ -88,7 +88,7 @@ Install tightvncviewer to try/use the vlc examples action types:
 
 Optional to use AirPlay, install the AirPlay Server:
 
-    Install the AirPlay server with the instructions from: https://github.com/FD-/RPiPlay
+    Install the AirPlay server with the instructions from https://github.com/FD-/RPiPlay .
 
 Optional settings:
 
@@ -96,8 +96,8 @@ Optional settings:
     - enable SSH and VNC server to control the Raspberry Pi
 
     - change Desktop background
-    - to disable the screen sleep see: https://raspberry-projects.com/pi/pi-operating-systems/raspbian/gui/disable-screen-sleep
-    - to disable the mouse pointer see: https://raspberrypi.stackexchange.com/questions/53127/how-to-permanently-hide-mouse-pointer-or-cursor-on-raspberry-pi 
+    - to disable the screen sleep, see: https://raspberry-projects.com/pi/pi-operating-systems/raspbian/gui/disable-screen-sleep
+    - to disable the mouse pointer, see: https://raspberrypi.stackexchange.com/questions/53127/how-to-permanently-hide-mouse-pointer-or-cursor-on-raspberry-pi 
 
 Change the actions and rules with the PHP scripts and TRY the actions.
 
