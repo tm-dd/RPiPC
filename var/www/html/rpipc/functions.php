@@ -296,7 +296,7 @@ function inputDateAndTime($timeStamp,$offsetName)
     $year=getYearOfTimeStamp($timeStamp); $month=getMonthOfTimeStamp($timeStamp); $day=getDayOfTimeStamp($timeStamp);
     $hour=getHourOfTimeStamp($timeStamp); $minute=getMinuteOfTimeStamp($timeStamp); $second=getSecondOfTimeStamp($timeStamp);
 
-    echo "date: \n"; printSelectField($offsetName."year",$year,$year,($year+2));
+    echo "date: \n"; printSelectField($offsetName."year",$year,($year-1),($year+2));
     echo " - \n"; printSelectField($offsetName."month",$month,1,12);
     echo " - \n"; printSelectField($offsetName."day",$day,1,31);
     echo "<br>time: \n"; printSelectField($offsetName."hour",$hour,0,23);
