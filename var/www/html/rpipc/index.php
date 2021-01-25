@@ -60,7 +60,14 @@
         if (isset($_POST['esecond'])) { $esecond=$_POST['esecond']; } else { $esecond=0; }
         if (isset($_POST['actionType'])) { $actionType=$_POST['actionType']; } else { $actionType=0; }
         if (isset($_POST['actionValue'])) { $actionValue=$_POST['actionValue']; } else { $actionValue=0; }
-
+        if (isset($_POST['repeatAction'])) { $repeatAction=$_POST['repeatAction']; } else { $repeatAction=0; }
+        if (isset($_POST['actionValue'])) { $repeatEvery=$_POST['repeatEvery']; } else { $repeatEvery=0; }
+        if (isset($_POST['lyear'])) { $lyear=$_POST['lyear']; } else { $lyear=0; }
+        if (isset($_POST['lmonth'])) { $lmonth=$_POST['lmonth']; } else { $lmonth=0; }
+        if (isset($_POST['lday'])) { $lday=$_POST['lday']; } else { $lday=0; }
+        if (isset($_POST['lhour'])) { $lhour=$_POST['lhour']; } else { $lhour=0; }
+        if (isset($_POST['lminute'])) { $lminute=$_POST['lminute']; } else { $lminute=0; }
+        if (isset($_POST['lsecond'])) { $lsecond=$_POST['lsecond']; } else { $lsecond=0; }
         
 /*****************
 
@@ -139,7 +146,9 @@
         
                 $begin=getTimpstampOfDateTimeSting("$byear-$bmonth-$bday $bhour:$bminute:$bsecond");
                 $end=getTimpstampOfDateTimeSting("$eyear-$emonth-$eday $ehour:$eminute:$esecond");
-                $newLine = array("$ID","$begin","$end","$actionType","$actionValue");
+                $repeatEnd=getTimpstampOfDateTimeSting("$lyear-$lmonth-$lday $lhour:$lminute:$lsecond");
+                if (($repeatAction=='---')||($repeatAction=='no repeat')) { $repeatAction='-'; }
+                $newLine = array("$ID","$begin","$end","$actionType","$actionValue","$repeatAction","$repeatEvery","$repeatEnd");
                 
                 editValueInCsvFile($csvFilePath,$csvValues,'edit',$ID,$newLine,$lastCsvLine,$csvDelimiterChar,$csvEnclosureChar);
     
@@ -161,7 +170,9 @@
                 $newId=getNextFreeID($csvValues);
                 $begin=getTimpstampOfDateTimeSting("$byear-$bmonth-$bday $bhour:$bminute:$bsecond");
                 $end=getTimpstampOfDateTimeSting("$eyear-$emonth-$eday $ehour:$eminute:$esecond");
-                $newLine = array("$newId","$begin","$end","$actionType","$actionValue");
+                $repeatEnd=getTimpstampOfDateTimeSting("$lyear-$lmonth-$lday $lhour:$lminute:$lsecond");
+                if (($repeatAction=='---')||($repeatAction=='no repeat')) { $repeatAction='-'; }
+                $newLine = array("$newId","$begin","$end","$actionType","$actionValue","$repeatAction","$repeatEvery","$repeatEnd");
                 
                 editValueInCsvFile($csvFilePath,$csvValues,'createNew',$newId,$newLine,$lastCsvLine,$csvDelimiterChar,$csvEnclosureChar);
     

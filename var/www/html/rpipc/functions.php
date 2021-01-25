@@ -327,6 +327,18 @@ function chooseActionType($currentAction,$actionRules)
     echo "</select>\n";
 }
 
+// get a list of values
+function chooseVaulue($currentValue,$arrayOfValues,$valueName)
+{
+    echo "<select size='1' name='$valueName'>\n";
+    if ( $currentValue!='' ) { echo "<option>".$currentValue."</option>\n"; echo "<option>---</option>\n"; }
+    foreach ($arrayOfValues as $value)
+    {
+      echo "<option>".$value."</option>\n";
+    }
+    echo "</select>\n";
+}
+
 // get actions als table
 function printActionsAsTableToEdit($csvValues,$debug)
 {
@@ -343,6 +355,9 @@ function printActionsAsTableToEdit($csvValues,$debug)
   echo "<th>end</th>\n";
   echo "<th>action type</th>\n";
   echo "<th>action parameter</th>\n";
+  echo "<th>repeat action</th>\n";
+  echo "<th>repeat every (days,...)</th>\n";
+  echo "<th>last repeat</th>\n";
   echo "<th>&nbsp;</th>\n";
   echo "</th></tr>\n";
   
@@ -356,6 +371,17 @@ function printActionsAsTableToEdit($csvValues,$debug)
     echo '<td>'; showDateAndTime($dim1val[2]); echo "</td>\n";
     echo '<td>'.$dim1val[3].'</td>'."\n";
     echo '<td>'.$dim1val[4].'</td>'."\n";
+    if ( $dim1val[5] == '-' ) 
+    { 
+    	// show no repeat settings, if "repeat action" is unused (value "-")
+    	echo "<td>-</td>\n<td>-</td>\n<td>-</td>\n"; 
+    }
+    else
+    {
+		echo '<td>'.$dim1val[5].'</td>'."\n";
+		echo '<td>'.$dim1val[6].'</td>'."\n";
+		echo '<td>'; showDateAndTime($dim1val[7]); echo "</td>\n";
+    }
     echo '<td>';
     echo '<form action="./index.php" method="post"><input type="hidden" name="ID" value="'.$dim1val[0].'">';
     echo '<input type="hidden" name="do" value="showEditAction"><input type="submit" value="edit"></form>'."\n";
@@ -422,7 +448,7 @@ function printActionLineAsTableToEditOrCopy($csvLine,$editOrCopy,$actionRules)
 {
 
     // for new actions, only
-    if ($csvLine=='') { $csvLine=array('-1',time(),(time()+300),'*** please choose ***',''); } 
+    if ($csvLine=='') { $csvLine=array('-1',time(),(time()+300),'*** please choose ***','','no repeat','-',(time()+300)); } 
   
     // start the table
     echo "\n<table align=\"center\" border=1 width=\"100%\" cellpadding=\"5\">\n";
@@ -438,17 +464,25 @@ function printActionLineAsTableToEditOrCopy($csvLine,$editOrCopy,$actionRules)
     echo "<th>start</th>\n";
     echo "<th>end</th>\n";
     echo "<th>action type</th>\n";
-    echo "<th>action parameter (only one string is possible)</th>\n";
+    echo "<th>action parameter (only one string)</th>\n";
+    echo "<th>repeat action</th>\n";
+    echo "<th>repeat every (days,...)</th>\n";
+    echo "<th>last repeat</th>\n";
     echo "<th>&nbsp;</th>\n";
     echo "</tr>\n";
-    
+
+    $repeatValues=array('hourly','daily','weekly','monthly');
+
     // values of the line
     echo '<tr>'."\n";
     echo '<td align="center">'; inputDateAndTime($csvLine[1],'b'); echo "</td>\n";
     echo '<td align="center">'; inputDateAndTime($csvLine[2],'e'); echo "</td>\n";
     echo '<td align="center">'; chooseActionType($csvLine[3],$actionRules);'</td>'."\n";
     echo '<td align="center"><input type="text" size="40" name="actionValue" value="'.$csvLine[4].'"></td>'."\n";
-    
+    echo '<td align="center">'; chooseVaulue($csvLine[5],$repeatValues,'repeatAction');'</td>'."\n";
+    echo '<td align="center">'; printSelectField("repeatEvery",$csvLine[6],1,31); '</td>'."\n";
+    echo '<td align="center">'; inputDateAndTime($csvLine[7],'l'); echo "</td>\n";
+
     if ($editOrCopy=='edit') { echo '<td align="center"><input type="submit" value="EDIT ACTION"></td>'."\n"; }
     if ($editOrCopy=='copy') { echo '<td align="center"><input type="submit" value="CREATE ACTION"></td>'."\n"; }
     
@@ -519,6 +553,9 @@ function printActionLineAsTableToDelete($csvLine)
     echo "<th>end</th>\n";
     echo "<th>action type</th>\n";
     echo "<th>action parameters</th>\n";
+    echo "<th>repeat action</th>\n";
+    echo "<th>repeat every (days,...)</th>\n";
+    echo "<th>last repeat</th>\n";
     echo "<th>&nbsp;</th>\n";
     echo "</tr>\n";
     
@@ -528,6 +565,17 @@ function printActionLineAsTableToDelete($csvLine)
     echo '<td>'; showDateAndTime($csvLine[2]); echo "</td>\n";
     echo '<td>'.$csvLine[3]."</td>\n";
     echo '<td>'.$csvLine[4]."</td>\n";
+    if ( $csvLine[5] == '-' ) 
+    { 
+    	// show no repeat settings, if "repeat action" is unused (value "-")
+    	echo "<td>-</td>\n<td>-</td>\n<td>-</td>\n"; 
+    }
+    else
+    {
+		echo '<td>'.$csvLine[5].'</td>'."\n";
+		echo '<td>'.$csvLine[6].'</td>'."\n";
+		echo '<td>'; showDateAndTime($csvLine[7]); echo "</td>\n";
+    }
     echo '<td><input type="submit" value="DELETE NOW"></td>'."\n";
     
     echo "</tr>\n";

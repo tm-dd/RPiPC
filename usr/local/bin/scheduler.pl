@@ -34,6 +34,9 @@
 # qw (Dumper);
 # print Dumper $referenceOfArray; 
 
+# to check repeating actions for months
+use POSIX qw(strftime);
+use Time::Local;
 
 #
 # settings
@@ -44,7 +47,7 @@ my $display=':0';                                                   # set $DISPL
 my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
 my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
 my $killWith=3;                                                     # 1 by PID; 2 by command ; 3 by PID and command
-my $DEBUG=1;                                                        # define the debug output level (0, 1 or 2)
+my $DEBUG=1;                                                        # define the debug output level (0, 1, 2 or 3)
 my %actionProgramMap;
 my %programOptionPrefix;
 my %programOptionSuffix;
@@ -173,16 +176,177 @@ sub print2dArray
     }
 }
 
+# check if line is active
+sub checkLineIsActive
+{
+	my $curTimestamp = shift;
+	my $startTimestamp = shift;
+	my $endTimestamp = shift;
+	my $repeat = shift;
+	my $repeatEvery = shift;
+	my $repeatEndTimestamp = shift;
+	my $DEBUG = shift;
+
+	if ($DEBUG>=2) { print "   DEBUG (check repeat): start='$startTimestamp', end='$endTimestamp', repeat='$repeat', repeatEvery='$repeatEvery', repeatEndTimestamp='$repeatEndTimestamp'\n"; }
+
+	# end before start
+	if ($startTimestamp>$endTimestamp) { print "   ERROR: Misconfiguration: Found action with earlier end Timestamp $endTimestamp than start Timestamp $startTimestamp .\n"; return 0; }
+
+	# start in future
+	if ($curTimestamp<=$startTimestamp) { return 0; }
+
+	# start in past, end in future
+	if (($curTimestamp>=$startTimestamp)&&($curTimestamp<=$endTimestamp))
+	{
+		return 1;
+	}
+
+	# possible repeating time
+	else
+	{
+		# no repeating configured
+		if ("$repeat" eq '-') { return 0; }
+
+		# repeating is possible
+		if (($curTimestamp<=$repeatEndTimestamp) && ($curTimestamp>=$startTimestamp))
+		{
+
+			if ($repeat eq 'hourly')
+			{
+
+				my $startTimestampModHour=$startTimestamp%(3600*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (hourly repeat): startTimestampModHour=$startTimestampModHour\n"; }
+				my $curTimestampModHour=$curTimestamp%(3600*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (hourly repeat): curTimestampModHour=$curTimestampModHour\n"; }
+				my $endTimestampModHour=$endTimestamp%(3600*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (hourly repeat): endTimestampModHour=$endTimestampModHour\n"; }
+
+				# simple case (e.q. start: 8:10 - end 8:30)
+				if ( (($startTimestampModHour)<=($endTimestampModHour)) && (($startTimestampModHour)<=($curTimestampModHour)) && (($endTimestampModHour)>($curTimestampModHour)) ) { return 1; }
+
+				# not simple case (e.q. start: 7:50 - end 8:10 -> split in 2 parts: 7:50 to 8:00 and 8:00 to 8:10)
+				if ( (($startTimestampModHour)>=($endTimestampModHour)) && (($startTimestampModHour)<=($curTimestampModHour)) ) { return 1; }
+				if ( (($startTimestampModHour)>=($endTimestampModHour)) && (($endTimestampModHour)>=($curTimestampModHour)) ) { return 1; }
+
+				# maybe a misconfiguration, because allways on (e.q. start: 8:10 - end 9:20, repeat hourly)
+				if ( ($endTimestamp-$startTimestamp) >= (3600*$repeatEvery) ) { return 1; }
+			}
+
+			if ($repeat eq 'daily')
+			{
+
+				my $startTimestampModDay=$startTimestamp%(86400*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (daily repeat): startTimestampModDay=$startTimestampModDay\n"; }
+				my $curTimestampModDay=$curTimestamp%(86400*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (daily repeat): curTimestampModDay=$curTimestampModDay\n"; }
+				my $endTimestampModDay=$endTimestamp%(86400*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (daily repeat): endTimestampModDay=$endTimestampModDay\n"; }
+
+				# simple case (e.q. start: 8:00 - end 16:30)
+				if ( (($startTimestampModDay)<=($endTimestampModDay)) && (($startTimestampModDay)<=($curTimestampModDay)) && (($endTimestampModDay)>($curTimestampModDay)) ) { return 1; }
+
+				# not simple case (e.q. start: 22:00 - end 7:00 -> split in 2 parts: 22:00 to 0:00 and 0:00 to 5:00)
+				if ( (($startTimestampModDay)>=($endTimestampModDay)) && (($startTimestampModDay)<=($curTimestampModDay)) ) { return 1; }
+				if ( (($startTimestampModDay)>=($endTimestampModDay)) && (($endTimestampModDay)>=($curTimestampModDay)) ) { return 1; }
+
+				# maybe a misconfiguration, because allways on (e.q. start: 8:00 - end 9:00 (next day), repeat daily)
+				if ( ($endTimestamp-$startTimestamp) >= (86400*$repeatEvery) ) { return 1; }
+			}
+
+			if ($repeat eq 'weekly')
+			{
+
+				my $startTimestampModWeek=$startTimestamp%(604800*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (weekly repeat): startTimestampModWeek=$startTimestampModWeek\n"; }
+				my $curTimestampModWeek=$curTimestamp%(604800*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (weekly repeat): curTimestampModWeek=$curTimestampModWeek\n"; }
+				my $endTimestampModWeek=$endTimestamp%(604800*$repeatEvery); if ($DEBUG>=2) { print "   DEBUG (weekly repeat): endTimestampModWeek=$endTimestampModWeek\n"; }
+
+				# simple case (e.q. start: 8:00 - end 16:30)
+				if ( (($startTimestampModWeek)<=($endTimestampModWeek)) && (($startTimestampModWeek)<=($curTimestampModWeek)) && (($endTimestampModWeek)>($curTimestampModWeek)) ) { return 1; }
+
+				# not simple case (e.q. start: 22:00 - end 7:00 -> split in 2 parts: 22:00 to 0:00 and 0:00 to 5:00)
+				if ( (($startTimestampModWeek)>=($endTimestampModWeek)) && (($startTimestampModWeek)<=($curTimestampModWeek)) ) { return 1; }
+				if ( (($startTimestampModWeek)>=($endTimestampModWeek)) && (($endTimestampModWeek)>=($curTimestampModWeek)) ) { return 1; }
+
+				# maybe a misconfiguration, because allways on (e.q. start: 8:00 - end 9:00 (next day), repeat daily)
+				if ( ($endTimestamp-$startTimestamp) >= (604800*$repeatEvery) ) { return 1; }
+			}
+
+			if ($repeat eq 'monthly') 
+			{
+				# bild seconds, minutes, ... years from the time stamps 
+				$startSec=strftime('%S',localtime($startTimestamp)); $startMin=strftime('%M',localtime($startTimestamp));
+				$startHour=strftime('%H',localtime($startTimestamp)); $startDay=strftime('%d',localtime($startTimestamp));
+				$startMonth=strftime("%m",localtime($startTimestamp)); $startYear=strftime("%Y",localtime($startTimestamp));
+
+				$curSec=strftime('%S',localtime($curTimestamp)); $curMin=strftime('%M',localtime($curTimestamp));
+				$curHour=strftime('%H',localtime($curTimestamp)); $curDay=strftime("%d",localtime($curTimestamp));
+				$curMonth=strftime("%m",localtime($curTimestamp)); $curYear=strftime("%Y",localtime($curTimestamp));
+
+				$endSec=strftime('%S',localtime($endTimestamp)); $endMin=strftime('%M',localtime($endTimestamp));
+				$endHour=strftime('%H',localtime($endTimestamp)); $endDay=strftime("%d",localtime($endTimestamp));
+				$endMonth=strftime("%m",localtime($endTimestamp)); $endYear=strftime("%Y",localtime($endTimestamp));
+
+				$repeatEndSec=strftime('%S',localtime($repeatEndTimestamp)); $repeatEndMin=strftime('%M',localtime($repeatEndTimestamp));
+				$repeatEndHour=strftime('%H',localtime($repeatEndTimestamp)); $repeatEndDay=strftime("%d",localtime($repeatEndTimestamp));
+				$repeatEndMonth=strftime("%m",localtime($repeatEndTimestamp)); $repeatEndYear=strftime("%Y",localtime($repeatEndTimestamp));
+
+				if ($DEBUG>=2) 
+				{
+					print "   DEBUG (repeat monthly): start            : $startYear-$startMonth-$startDay $startHour:$startMin:$startSec\n"; 
+					print "   DEBUG (repeat monthly): end              : $endYear-$endMonth-$endDay $endHour:$endMin:$endSec\n"; 
+					print "   DEBUG (repeat monthly): cur              : $curYear-$curMonth-$curDay $curHour:$curMin:$curSec\n"; 
+					print "   DEBUG (repeat monthly): end of repeating : $repeatEndYear-$repeatEndMonth-$repeatEndDay $repeatEndHour:$repeatEndMin:$repeatEndSec\n"; 
+				}
+
+				# bild months since 1970 (also helpfully to check if a December is befor or after January)
+				$startMonthsUnixTime=($startYear*12)+$startMonth;
+				$curMonthsUnixTime=($curYear*12)+$curMonth;
+				$endMonthsUnixTime=($endYear*12)+$endMonth;
+
+				# build the Number of Months from today to the start day
+				$diffNumberOfMonthsFromStartToCurrent=($curMonthsUnixTime-$startMonthsUnixTime);
+				if ($DEBUG>=2) { print "   DEBUG: diffNumberOfMonthsFromStartToCurrent=$diffNumberOfMonthsFromStartToCurrent\n"; }
+
+				# if the the month number is usable for repeating
+				if (($diffNumberOfMonthsFromStartToCurrent % $repeatEvery) == 0)
+				{
+					# how long should be the action
+					$actionDurationSec=($endTimestamp-$startTimestamp);
+
+					# calculate start and end of the current repeating
+					$repeatStartSec=timelocal($startSec,$startMin,$startHour,$startDay,$curMonth-1,$curYear);
+					$repeatEndSec=($actionDurationSec+$repeatStartSec);
+
+					if ($DEBUG>=2) 
+					{
+						print "   DEBUG (repeat monthly): repeatStartSec= $repeatStartSec , curTimestamp= $curTimestamp\n"; 
+						print "   DEBUG (repeat monthly): repeatEndSec  = $repeatEndSec , actionDurationSec= $actionDurationSec\n";
+					}
+
+					# if the action is between start and end repeating loop, start the action again later
+					if (($repeatStartSec<=$curTimestamp) && ($curTimestamp<$repeatEndSec)) 
+					{ 
+						if ($DEBUG>=2) { print "   DEBUG repeat monthly action, now.\n"; }
+						return "1"; 
+					}
+				}
+
+			}
+		}
+	}
+
+	# action should not start
+	return 0;
+}
+
 # save the currently active lines from @csvArrayOfAllFields in @curActiveCsvLines
 sub getcurActiveCsvLines
 {
-    my $curTimeStamp = time();
-    if ($DEBUG>=1) { print "current TimeStamp: $curTimeStamp\n"; }
+    my $curTimestamp = time();
+    if ($DEBUG>=1) { print "   DEBUG: current TimeStamp: $curTimestamp\n"; }
     foreach $id (@curIndexesCsvFile)
     {
-        my $startTimestamp="$csvArrayOfAllFields[$id][1]\n";
-        my $endTimestamp="$csvArrayOfAllFields[$id][2]\n";
-        if (($curTimeStamp>=$startTimestamp)&&($curTimeStamp<=$endTimestamp))
+        my $startTimestamp="$csvArrayOfAllFields[$id][1]";
+        my $endTimestamp="$csvArrayOfAllFields[$id][2]";
+        my $repeat="$csvArrayOfAllFields[$id][5]";
+        my $repeatEvery="$csvArrayOfAllFields[$id][6]";
+        my $repeatEndTimestamp="$csvArrayOfAllFields[$id][7]";
+#        if (($curTimestamp>=$startTimestamp)&&($curTimestamp<=$endTimestamp))
+        if (checkLineIsActive($curTimestamp,$startTimestamp,$endTimestamp,$repeat,$repeatEvery,$repeatEndTimestamp,$DEBUG)==1)
         {
             if ($DEBUG>=3) { print '  DEBUG, Found valid line: '; print1dArray(' | ',$csvArrayOfAllFields[$id]); }
             $curActiveCsvLines[$id]=$csvArrayOfAllFields[$id];

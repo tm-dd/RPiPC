@@ -30,7 +30,7 @@
 
 # settings
 checkThisStringLastLine='# phpds,version='
-neededVersionString='1'
+neededVersionString='2'
 
 # check parameters
 if [ "${2}" = '' ]

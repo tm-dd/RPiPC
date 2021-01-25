@@ -35,7 +35,7 @@
     // CSV settings   
     $csvDelimiterChar=';';
     $csvEnclosureChar='"';
-    $lastCsvLine="# rpipc,version=1\n";
+    $lastCsvLine="# rpipc,version=2\n";
     
     // security setting (set to 'y' to allow to change the commands)
     $allowManageRules='y';

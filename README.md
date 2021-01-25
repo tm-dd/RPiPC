@@ -101,5 +101,4 @@ Optional settings:
 
 Change the actions and rules with the PHP scripts and TRY the actions.
 
-
 Thomas Mueller <><
