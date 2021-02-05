@@ -42,12 +42,15 @@ use Time::Local;
 # settings
 #
 
-my $sleepTimeBeforeRetry=5;                                         # seconds to sleep for the next loop
-my $display=':0';                                                   # set $DISPLAY for commands
 my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
 my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
+my $runThisEveryLoop='/usr/local/bin/sync_rpipc_csv_files.sh'       # if this file is executable, run it on the beginning of every loop (useful to download new CSV files)
+
+my $sleepTimeBeforeRetry=5;                                         # seconds to sleep for the next loop
+my $display=':0';                                                   # set $DISPLAY for commands
 my $killWith=3;                                                     # 1 by PID; 2 by command ; 3 by PID and command
 my $DEBUG=1;                                                        # define the debug output level (0, 1, 2 or 3)
+
 my %actionProgramMap;
 my %programOptionPrefix;
 my %programOptionSuffix;
@@ -559,7 +562,10 @@ $SIG{CHLD}="IGNORE";                                    # do not keep zombie pro
 my $break=0;
 while ( $break != 1 )
 {
-    
+
+    # if this file is executable, run it on the beginning of every loop (useful to download new CSV files)
+    if ( -x "$runThisEveryLoop" ) { system ("$runThisEveryLoop"); }
+
     # read local (copy of the) CSV file with actions
     readCsvFileToArray($csvFileToRead);
     

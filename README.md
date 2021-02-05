@@ -48,18 +48,22 @@ If you want to use the PHP scripts with a local Apache 2 web server on the Raspb
     pi@raspberrypi:~ $ sudo chmod 755 /var/www/html/rpipc
     pi@raspberrypi:~ $ sudo chmod 644 /var/www/html/rpipc/*
 
-OR, OPTIONAL (if the PHP scripts are running on a different host) you can use the following script:
+OR, OPTIONAL (if the PHP scripts are running on a different host) you can use the following scripts:
 
     pi@raspberrypi:~ $ sudo cp -a RPiPC/usr/local/bin/sync_configs.sh /usr/local/bin/
     pi@raspberrypi:~ $ sudo chown root:root /usr/local/bin/sync_configs.sh
     pi@raspberrypi:~ $ sudo chmod 755 /usr/local/bin/sync_configs.sh
-    
-    pi@raspberrypi:~ $ sudo crontab -e
-    crontab: installing new crontab
-    pi@raspberrypi:~ $ sudo crontab -l | tail -n 2
-    * * * * * /usr/local/bin/sync_configs.sh /home/pi/plan.csv https://test.example.org/pids/plan.csv 'login' 'Passw0rd'
-    * * * * * /usr/local/bin/sync_configs.sh /home/pi/action-settings.csv https://test.example.org/pids/action-settings.csv 'login' 'Passw0rd'
-    pi@raspberrypi:~ $
+
+    pi@raspberrypi:~ $ sudo nano /usr/local/bin/sync_rpipc_csv_files.sh 
+    pi@raspberrypi:~ $ cat /usr/local/bin/sync_rpipc_csv_files.sh 
+    #!/bin/bash
+    /usr/local/bin/sync_configs.sh /home/pi/plan.csv https://test.example.org/pids/plan.csv 'login' 'Passw0rd'
+    /usr/local/bin/sync_configs.sh /home/pi/action-settings.csv https://test.example.org/pids/action-settings.csv 'login' 'Passw0rd'
+    exit 0
+    pi@raspberrypi:~ $ 
+
+    pi@raspberrypi:~ $ sudo chmod 755 /usr/local/bin/sync_rpipc_csv_files.sh 
+    pi@raspberrypi:~ $ sudo chown root:root /usr/local/bin/sync_rpipc_csv_files.sh 
 
     pi@raspberrypi:~ $ sudo nano /usr/local/bin/scheduler.pl
     pi@raspberrypi:~ $ diff /usr/local/bin/scheduler.pl RPiPC/usr/local/bin/scheduler.pl
@@ -70,7 +74,7 @@ OR, OPTIONAL (if the PHP scripts are running on a different host) you can use th
     > my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
     > my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
     pi@raspberrypi:~ $
-    
+
 Start the scheduler:
 
     pi@raspberrypi:~ $ sudo systemctl enable rpipc_scheduler
