@@ -94,15 +94,47 @@ Optional to use AirPlay, install the AirPlay Server:
 
     Install the AirPlay server with the instructions from https://github.com/FD-/RPiPlay .
 
-Optional settings:
+Optional, protect the PHP scripts with HTACCESS (login and password):
 
-    - protect the PHP scripts with htaccess based password protection
+	root@raspberrypi:~# chmod 644 /var/www/html/rpipc/.htaccess
+	
+	root@raspberrypi:~# htpasswd -B -c /var/www/html/.htpasswd admin
+	New password: 
+	Re-type new password: 
+	Adding password for user admin
+	root@raspberrypi:~# 
+	
+	root@raspberrypi:~# a2enmod rewrite
+	Enabling module rewrite.
+	To activate the new configuration, you need to run:
+	  systemctl restart apache2
+	root@raspberrypi:~# 
+		
+	root@raspberrypi:~# cp -a /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default_org.conf 
+	root@raspberrypi:~# vim /etc/apache2/sites-available/000-default.conf
+	root@raspberrypi:~# diff /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default_org.conf
+	14,21d13
+	< 	<Directory /var/www/html/rpipc/>
+	< 		Options -Indexes -FollowSymLinks
+	< 		AuthType Basic
+	< 		AuthUserFile /var/www/html/.htpasswd
+	< 		Require valid-user
+	< 		AuthName "protected access"
+	< 	</Directory>
+	< 
+	root@raspberrypi:~# 
+	
+	root@raspberrypi:~# systemctl restart apache2
+
+Optional, but usefull settings:
+
     - enable SSH and VNC server to control the Raspberry Pi
-
     - change Desktop background
     - to disable the screen sleep, see: https://raspberry-projects.com/pi/pi-operating-systems/raspbian/gui/disable-screen-sleep
     - to disable the mouse pointer, see: https://raspberrypi.stackexchange.com/questions/53127/how-to-permanently-hide-mouse-pointer-or-cursor-on-raspberry-pi 
+    - disable password less access with sudo for the user pi, to protect the system
 
 Change the actions and rules with the PHP scripts and TRY the actions.
+
 
 Thomas Mueller <><

@@ -44,7 +44,7 @@ use Time::Local;
 
 my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
 my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
-my $runThisEveryLoop='/usr/local/bin/sync_rpipc_csv_files.sh'       # if this file is executable, run it on the beginning of every loop (useful to download new CSV files)
+my $runThisEveryLoop='/usr/local/bin/sync_rpipc_csv_files.sh';      # if this file is executable, run it on the beginning of every loop (useful to download new CSV files)
 
 my $sleepTimeBeforeRetry=5;                                         # seconds to sleep for the next loop
 my $display=':0';                                                   # set $DISPLAY for commands
