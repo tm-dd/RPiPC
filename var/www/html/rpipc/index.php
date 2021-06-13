@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--
 
-    Copyright (C) 2020, Thomas Mueller <><
+    Copyright (C) 2021, Thomas Mueller <><
     
     Redistribution and use in SOURCE and BINARY forms, with or without
     modification, are permitted provided that the following conditions are met:
@@ -24,11 +24,6 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -->
-<html>
-    <head><title>Manage Actions</title></head>
-    <body>
-    <h1>MANAGE ACTIONS</h1>
-
 
 <?php
 
@@ -81,7 +76,19 @@
         // include the function config
         include "./functions.php";
 
-        
+
+/*****************
+
+  HTML START
+
+*****************/
+
+		echo "<html>\n";
+		echo "    <head><title>Manage Actions on display '".$displayName."'</title></head>\n";
+		echo "    <body>\n";
+		echo "    <h1>MANAGE ACTIONS on display '".$displayName."'</h1>\n";
+
+
 /*************
 
   READ ALL ACTIONS
@@ -219,9 +226,16 @@
         {
             echo "<br><a href='./manage_rules.php'>manage rules (for advanced users only)</a>\n";
         }
-    
-?>
 
-    <br>
-    </body>
-</html>
+
+/*****************
+
+  HTML END
+
+*****************/
+
+		echo "    <br>\n";
+		echo "    </body>\n";
+		echo "</html>\n";
+
+?>

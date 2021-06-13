@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--
 
-    Copyright (C) 2020, Thomas Mueller <><
+    Copyright (C) 2021, Thomas Mueller <><
     
     Redistribution and use in SOURCE and BINARY forms, with or without
     modification, are permitted provided that the following conditions are met:
@@ -24,9 +24,6 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -->
-<html>
-    <head><title>Manage Rules</title></head>
-    <body>
 
 <?php
 
@@ -63,7 +60,18 @@
     // include the function config
     include "./functions.php";
 
- 
+
+/*****************
+
+  HTML START
+
+*****************/
+
+	echo "<html>\n";
+	echo "    <head><title>Manage Rules on display '".$displayName."'</title></head>\n";
+	echo "    <body>\n";
+
+
 /*****************
 
     Check if it's allowed to manage rules
@@ -77,7 +85,7 @@
     }
     else
     {
-        echo "<h1>MANAGE RULES (for advanced users only)</h1>\n";
+        echo "<h1>MANAGE RULES (please, be careful) on display '".$displayName."'</h1>\n";
     }
  
         
@@ -205,11 +213,18 @@
 
         echo '<form action="./manage_rules.php" method="post"><input type="hidden" name="ID" value="-1">';
         echo '<input type="hidden" name="do" value="showNewRule"><input type="submit" value="create new rule"></form>'."\n";
- 
-?>
 
-    <br>
-    <a href="./index.php">manage actions</a>
-    <br>
-    </body>
-</html>
+
+/*****************
+
+  HTML END
+
+*****************/
+
+		echo "    <br>\n";
+		echo "    <a href='./index.php'>manage actions</a><br>\n";
+		echo "    <br>\n";
+		echo "    </body>\n";
+		echo "</html>\n";
+
+?>

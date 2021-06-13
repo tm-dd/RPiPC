@@ -2,7 +2,7 @@
 
 /*
 
-    Copyright (C) 2020, Thomas Mueller <><
+    Copyright (C) 2021, Thomas Mueller <><
     
     Redistribution and use in SOURCE and BINARY forms, with or without
     modification, are permitted provided that the following conditions are met:

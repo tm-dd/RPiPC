@@ -2,7 +2,7 @@
 
     /*
     
-        Copyright (C) 2020, Thomas Mueller <><
+        Copyright (C) 2021, Thomas Mueller <><
         
         Redistribution and use in SOURCE and BINARY forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -25,10 +25,13 @@
         SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     */
-    
+
+    // name of display
+    $displayName='Church entrance';
+
     // the CSV file with the planned actions
     $csvFilePath='./plan.csv';
-    
+
     // the CSV file of posible action (rules)
     $actionRulesFilePath='./action-settings.csv';
 
@@ -36,7 +39,7 @@
     $csvDelimiterChar=';';
     $csvEnclosureChar='"';
     $lastCsvLine="# rpipc,version=2\n";
-    
+
     // security setting (set to 'y' to allow to change the commands)
     $allowManageRules='y';
 
