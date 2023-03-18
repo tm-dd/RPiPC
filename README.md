@@ -7,7 +7,7 @@ Maybe good to use in Churches and Free Churches.
 
 Here are some scripts which allow you to start an stop processes on a Raspberry Pi (or other linux systems) with the rules from a PHP script on a web server.
 
-The idea is, to define time based rules on a web page. The Raspberry Pi start and stop the programs automatically. 
+The idea is, to define time based rules on a web page. The Raspberry Pi start and stop the programs automatically. It's also possible to use a switch, attached to the GPIO sockets, to switch between defined actions.
 
 Such programs can be:
 
@@ -33,10 +33,11 @@ Download the scripts:
 
 Install the scheduler:
 
-    pi@raspberrypi:~ $ sudo cp -a RPiPC/usr/local/bin/scheduler.pl /usr/local/bin/
-    pi@raspberrypi:~ $ sudo cp -a RPiPC/etc/systemd/system/rpipc_scheduler.service /etc/systemd/system/
-    pi@raspberrypi:~ $ sudo chown root:root /usr/local/bin/scheduler.pl /etc/systemd/system/rpipc_scheduler.service
-    pi@raspberrypi:~ $ sudo chmod 755 /usr/local/bin/scheduler.pl /etc/systemd/system/rpipc_scheduler.service
+    pi@raspberrypi:~ $ sudo cp -a RPiPC/usr/local/bin/scheduler.pl RPiPC/usr/local/bin/read_gpio_switch.py /usr/local/bin/
+    pi@raspberrypi:~ $ sudo cp -a RPiPC/etc/systemd/system/rpipc_scheduler.service RPiPC/etc/systemd/system/rpipc_switcher.service /etc/systemd/system/
+    pi@raspberrypi:~ $ sudo chown root:root /usr/local/bin/scheduler.pl /usr/local/bin/read_gpio_switch.py /etc/systemd/system/rpipc_scheduler.service /etc/systemd/system/rpipc_switcher.service
+    pi@raspberrypi:~ $ sudo chmod 755 /usr/local/bin/scheduler.pl /usr/local/bin/read_gpio_switch.py
+    pi@raspberrypi:~ $ sudo chmod 644 /etc/systemd/system/rpipc_scheduler.service /etc/systemd/system/rpipc_switcher.service
 
 If you want to use the PHP scripts with a local Apache 2 web server on the Raspberry Pi:
 
@@ -75,12 +76,15 @@ OR, OPTIONAL (if the PHP scripts are running on a different host) you can use th
     > my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
     pi@raspberrypi:~ $
 
-Start the scheduler:
+Enable and start the scheduler:
 
     pi@raspberrypi:~ $ sudo systemctl enable rpipc_scheduler
-    Created symlink /etc/systemd/system/multi-user.target.wants/rpipc_scheduler.service → /etc/systemd/system/rpipc_scheduler.service.
     pi@raspberrypi:~ $ sudo systemctl start rpipc_scheduler
-    pi@raspberrypi:~ $ 
+
+Optional, enable and start the switch analyser process:
+
+    pi@raspberrypi:~ $ sudo systemctl enable rpipc_switcher
+    pi@raspberrypi:~ $ sudo systemctl start rpipc_switcher
 
 Set the audio output device for the example action type "audio":
 

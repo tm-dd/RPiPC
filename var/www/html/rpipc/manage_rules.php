@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--
 
-    Copyright (C) 2021, Thomas Mueller <><
+    Copyright (C) 2023, Thomas Mueller <><
     
     Redistribution and use in SOURCE and BINARY forms, with or without
     modification, are permitted provided that the following conditions are met:

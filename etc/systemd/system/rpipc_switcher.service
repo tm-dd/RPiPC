@@ -1,7 +1,7 @@
 #
 # by Thomas Mueller (developer@mueller-dresden.de)
 #
-# Start the scheduler script, which start and stop programs, based on the timestamps from a CSV file.
+# start a script to check a switch on the GPIO ports and write values to a file
 # 
 # Copyright (C) 2023, Thomas Mueller
 # 
@@ -27,16 +27,16 @@
 #
 
 [Unit]
-Description=RPiPC scheduler run
+Description=RPiPC read_gpio_switch.py run
 Wants=network.target
 After=syslog.target network-online.target
-ConditionFileIsExecutable=/usr/local/bin/scheduler.pl
+ConditionFileIsExecutable=/usr/local/bin/read_gpio_switch.py
 
 [Service]
 Type=simple
 User=pi
 Group=pi
-ExecStart=/usr/local/bin/scheduler.pl
+ExecStart=/usr/local/bin/read_gpio_switch.py
 Restart=on-failure
 RestartSec=10
 KillMode=process

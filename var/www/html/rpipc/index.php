@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--
 
-    Copyright (C) 2021, Thomas Mueller <><
+    Copyright (C) 2023, Thomas Mueller <><
     
     Redistribution and use in SOURCE and BINARY forms, with or without
     modification, are permitted provided that the following conditions are met:
@@ -63,7 +63,9 @@
         if (isset($_POST['lhour'])) { $lhour=$_POST['lhour']; } else { $lhour=0; }
         if (isset($_POST['lminute'])) { $lminute=$_POST['lminute']; } else { $lminute=0; }
         if (isset($_POST['lsecond'])) { $lsecond=$_POST['lsecond']; } else { $lsecond=0; }
-        
+        if (isset($_POST['switchPosition'])) { $switchPosition=$_POST['switchPosition']; } else { $switchPosition='-'; }
+
+
 /*****************
 
   INCLUDE UND CO.
@@ -155,7 +157,7 @@
                 $end=getTimpstampOfDateTimeSting("$eyear-$emonth-$eday $ehour:$eminute:$esecond");
                 $repeatEnd=getTimpstampOfDateTimeSting("$lyear-$lmonth-$lday $lhour:$lminute:$lsecond");
                 if (($repeatAction=='---')||($repeatAction=='no repeat')) { $repeatAction='-'; }
-                $newLine = array("$ID","$begin","$end","$actionType","$actionValue","$repeatAction","$repeatEvery","$repeatEnd");
+                $newLine = array("$ID","$begin","$end","$actionType","$actionValue","$repeatAction","$repeatEvery","$repeatEnd","$switchPosition");
                 
                 editValueInCsvFile($csvFilePath,$csvValues,'edit',$ID,$newLine,$lastCsvLine,$csvDelimiterChar,$csvEnclosureChar);
     
@@ -179,7 +181,7 @@
                 $end=getTimpstampOfDateTimeSting("$eyear-$emonth-$eday $ehour:$eminute:$esecond");
                 $repeatEnd=getTimpstampOfDateTimeSting("$lyear-$lmonth-$lday $lhour:$lminute:$lsecond");
                 if (($repeatAction=='---')||($repeatAction=='no repeat')) { $repeatAction='-'; }
-                $newLine = array("$newId","$begin","$end","$actionType","$actionValue","$repeatAction","$repeatEvery","$repeatEnd");
+                $newLine = array("$newId","$begin","$end","$actionType","$actionValue","$repeatAction","$repeatEvery","$repeatEnd","$switchPosition");
                 
                 editValueInCsvFile($csvFilePath,$csvValues,'createNew',$newId,$newLine,$lastCsvLine,$csvDelimiterChar,$csvEnclosureChar);
     
@@ -219,7 +221,8 @@
         printActionsAsTableToEdit($csvValues,$debug);
 
         echo '<form action="./index.php" method="post"><input type="hidden" name="ID" value="-1">';
-        echo '<input type="hidden" name="do" value="showNewAction"><input type="submit" value="create new action"></form>'."\n";
+        echo '<input type="hidden" name="do" value="showNewAction"><input type="submit" value="create new action"></form><br>'."\n";
+        echo '<hr><br>Hint: Use the optinal "manual switch" for an manually switching between different rules, at the same time, depending on a switching counter.'."<br>\n";
 
 
         if ($allowManageRules == 'y')

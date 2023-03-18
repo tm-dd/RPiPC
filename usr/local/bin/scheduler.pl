@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #
-# by Thomas Mueller (thomas@mueller-dresden.de)
+# by Thomas Mueller (developer@mueller-dresden.de)
 #
 # A scheduler script, which start and stop programs, based on the timestamps from a CSV file.
 # 
-# Copyright (C) 2020, Thomas Mueller
+# Copyright (C) 2023, Thomas Mueller
 # 
 # Redistribution and use in SOURCE and BINARY forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -45,6 +45,7 @@ use Time::Local;
 my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
 my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
 my $runThisEveryLoop='/usr/local/bin/sync_rpipc_csv_files.sh';      # if this file is executable, run it on the beginning of every loop (useful to download new CSV files)
+my $manualSwitchFile='/tmp/manualSwitchFile_for_scheduler.txt';     # if exists, read this file every loop and use number inside to switch between different commands
 
 my $sleepTimeBeforeRetry=5;                                         # seconds to sleep for the next loop
 my $display=':0';                                                   # set $DISPLAY for commands
@@ -188,9 +189,11 @@ sub checkLineIsActive
 	my $repeat = shift;
 	my $repeatEvery = shift;
 	my $repeatEndTimestamp = shift;
+	my $curSwitchPosition = shift;
+	my $csvSwitchPosition = shift;
 	my $DEBUG = shift;
 
-	if ($DEBUG>=2) { print "   DEBUG (check repeat): start='$startTimestamp', end='$endTimestamp', repeat='$repeat', repeatEvery='$repeatEvery', repeatEndTimestamp='$repeatEndTimestamp'\n"; }
+	if ($DEBUG>=2) { print "   DEBUG (check repeat): start='$startTimestamp', end='$endTimestamp', repeat='$repeat', repeatEvery='$repeatEvery', repeatEndTimestamp='$repeatEndTimestamp', curSwitchPosition='$curSwitchPosition', csvSwitchPosition='$csvSwitchPosition'\n"; }
 
 	# end before start
 	if ($startTimestamp>$endTimestamp) { print "   ERROR: Misconfiguration: Found action with earlier end Timestamp $endTimestamp than start Timestamp $startTimestamp .\n"; return 0; }
@@ -198,8 +201,8 @@ sub checkLineIsActive
 	# start in future
 	if ($curTimestamp<=$startTimestamp) { return 0; }
 
-	# start in past, end in future
-	if (($curTimestamp>=$startTimestamp)&&($curTimestamp<=$endTimestamp))
+	# start in past, end in future and the switch in der correct position
+	if (($curTimestamp>=$startTimestamp)&&($curTimestamp<=$endTimestamp)&&($curSwitchPosition==$csvSwitchPosition))
 	{
 		return 1;
 	}
@@ -210,8 +213,8 @@ sub checkLineIsActive
 		# no repeating configured
 		if ("$repeat" eq '-') { return 0; }
 
-		# repeating is possible
-		if (($curTimestamp<=$repeatEndTimestamp) && ($curTimestamp>=$startTimestamp))
+		# repeating is possible and the switch in der correct position
+		if (($curTimestamp<=$repeatEndTimestamp) && ($curTimestamp>=$startTimestamp) && ($curSwitchPosition==$csvSwitchPosition))
 		{
 
 			if ($repeat eq 'hourly')
@@ -339,8 +342,9 @@ sub checkLineIsActive
 # save the currently active lines from @csvArrayOfAllFields in @curActiveCsvLines
 sub getcurActiveCsvLines
 {
+	my $curSwitchPosition = shift;
     my $curTimestamp = time();
-    if ($DEBUG>=1) { print "   DEBUG: current TimeStamp: $curTimestamp\n"; }
+    if ($DEBUG>=1) { print "DEBUG: current TimeStamp: $curTimestamp\n"; }
     foreach $id (@curIndexesCsvFile)
     {
         my $startTimestamp="$csvArrayOfAllFields[$id][1]";
@@ -348,8 +352,9 @@ sub getcurActiveCsvLines
         my $repeat="$csvArrayOfAllFields[$id][5]";
         my $repeatEvery="$csvArrayOfAllFields[$id][6]";
         my $repeatEndTimestamp="$csvArrayOfAllFields[$id][7]";
-#        if (($curTimestamp>=$startTimestamp)&&($curTimestamp<=$endTimestamp))
-        if (checkLineIsActive($curTimestamp,$startTimestamp,$endTimestamp,$repeat,$repeatEvery,$repeatEndTimestamp,$DEBUG)==1)
+        my $csvSwitchPosition="$csvArrayOfAllFields[$id][8]";
+        if ($csvSwitchPosition=='-') { $csvSwitchPosition=1; } # '-' also means '1' in this parameter
+        if (checkLineIsActive($curTimestamp,$startTimestamp,$endTimestamp,$repeat,$repeatEvery,$repeatEndTimestamp,$curSwitchPosition,$csvSwitchPosition,$DEBUG)==1)
         {
             if ($DEBUG>=3) { print '  DEBUG, Found valid line: '; print1dArray(' | ',$csvArrayOfAllFields[$id]); }
             $curActiveCsvLines[$id]=$csvArrayOfAllFields[$id];
@@ -552,12 +557,37 @@ sub stopAction
     }
 }
 
+# read the file $manualSwitchFile and check if there is number higher the 1
+sub getManualSwitchPositionIfDefined
+{
+	my $switchPosition=0;
+
+	open (fileHandler,'<'.$manualSwitchFile) or return 1;
+	while (<fileHandler>)
+	{
+		chomp($line=$_);
+		$switchPosition=$line;
+	}
+	close fileHandler;
+	
+	if ( ($switchPosition > 1) && ($switchPosition < 1000) )
+	{
+		return $switchPosition;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
 
 #
 # main loop
 #
 
 $SIG{CHLD}="IGNORE";                                    # do not keep zombie processes, if started programs are crashed
+
+my $switchPosition=0;
 
 my $break=0;
 while ( $break != 1 )
@@ -569,8 +599,12 @@ while ( $break != 1 )
     # read local (copy of the) CSV file with actions
     readCsvFileToArray($csvFileToRead);
     
+    # if exists read the file with switch position
+    $curSwitchPosition=getManualSwitchPositionIfDefined();
+    if ($DEBUG>=1) { print "DEBUG: curSwitchPosition='$curSwitchPosition'\n"; }
+    
     # get the active lines from the CSV file
-    getcurActiveCsvLines();
+    getcurActiveCsvLines($curSwitchPosition);
     
     # read local (copy of the) CSV file with actions settings (or rules)
     readActionSettings($settingsFileToRead);

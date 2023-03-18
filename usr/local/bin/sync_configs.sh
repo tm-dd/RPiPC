@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# by Thomas Mueller (thomas@mueller-dresden.de)
+# by Thomas Mueller (developer@mueller-dresden.de)
 #
-# A simple script to automatically download and check a CVS file from a web page.
+# a script to automatically download and check a CVS file from a web page
 #
-# Copyright (C) 2020, Thomas Mueller
+# Copyright (C) 2023, Thomas Mueller
 # 
 # Redistribution and use in SOURCE and BINARY forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -30,7 +30,7 @@
 
 # settings
 checkThisStringLastLine='# phpds,version='
-neededVersionString='2'
+neededVersionString='3'
 
 # check parameters
 if [ "${2}" = '' ]

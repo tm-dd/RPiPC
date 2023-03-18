@@ -284,9 +284,9 @@ function getNextFreeID($csvValues)
 function printSelectField($name,$start,$min,$max)
 {
     echo "<select size='1' name='".$name."'>\n";
-    if ( $start!='' ) { echo "<option>".$start."</option>\n"; "<option>---</option>\n"; }
+    if ( $start!='' ) { echo "<option>".$start."</option>"; "<option>---</option>"; }
     for ($i=$min; $i<=$max; $i++) { echo "<option>".$i."</option>\n"; }
-    echo "</select>\n";
+    echo "\n</select>\n";
 }
 
 // input field for date and time
@@ -322,9 +322,9 @@ function chooseActionType($currentAction,$actionRules)
     if ( $currentAction!='' ) { echo "<option>".$currentAction."</option>\n"; echo "<option>---</option>\n"; }
     foreach ($actionRules as $dim1val)
     {
-      echo "<option>".$dim1val[0]."</option>\n";
+      echo "<option>".$dim1val[0]."</option>";
     }
-    echo "</select>\n";
+    echo "\n</select>\n";
 }
 
 // get a list of values
@@ -336,7 +336,7 @@ function chooseVaulue($currentValue,$arrayOfValues,$valueName)
     {
       echo "<option>".$value."</option>\n";
     }
-    echo "</select>\n";
+    echo "\n</select>";
 }
 
 // get actions als table
@@ -358,6 +358,7 @@ function printActionsAsTableToEdit($csvValues,$debug)
   echo "<th>repeat action</th>\n";
   echo "<th>repeat every (days,...)</th>\n";
   echo "<th>last repeat</th>\n";
+  echo "<th>manual switch (optional)</th>\n";
   echo "<th>&nbsp;</th>\n";
   echo "</th></tr>\n";
   
@@ -382,6 +383,7 @@ function printActionsAsTableToEdit($csvValues,$debug)
 		echo '<td>'.$dim1val[6].'</td>'."\n";
 		echo '<td>'; showDateAndTime($dim1val[7]); echo "</td>\n";
     }
+    echo '<td>'.$dim1val[8].'</td>'."\n";
     echo '<td>';
     echo '<form action="./index.php" method="post"><input type="hidden" name="ID" value="'.$dim1val[0].'">';
     echo '<input type="hidden" name="do" value="showEditAction"><input type="submit" value="edit"></form>'."\n";
@@ -447,8 +449,8 @@ function printRulesAsTableToEdit($csvValues)
 function printActionLineAsTableToEditOrCopy($csvLine,$editOrCopy,$actionRules)
 {
 
-    // for new actions, only
-    if ($csvLine=='') { $csvLine=array('-1',time(),(time()+300),'*** please choose ***','','no repeat','-',(time()+300)); } 
+    // for new actions, set the default values
+    if ($csvLine=='') { $csvLine=array('-1',time(),(time()+300),'*** please choose ***','','no repeat','-',(time()+300),'-'); } 
   
     // start the table
     echo "\n<table align=\"center\" border=1 width=\"100%\" cellpadding=\"5\">\n";
@@ -468,6 +470,7 @@ function printActionLineAsTableToEditOrCopy($csvLine,$editOrCopy,$actionRules)
     echo "<th>repeat action</th>\n";
     echo "<th>repeat every (days,...)</th>\n";
     echo "<th>last repeat</th>\n";
+    echo "<th>manual switch (optional)</th>\n";
     echo "<th>&nbsp;</th>\n";
     echo "</tr>\n";
 
@@ -482,6 +485,7 @@ function printActionLineAsTableToEditOrCopy($csvLine,$editOrCopy,$actionRules)
     echo '<td align="center">'; chooseVaulue($csvLine[5],$repeatValues,'repeatAction');'</td>'."\n";
     echo '<td align="center">'; printSelectField("repeatEvery",$csvLine[6],1,31); '</td>'."\n";
     echo '<td align="center">'; inputDateAndTime($csvLine[7],'l'); echo "</td>\n";
+    echo '<td align="center">'; printSelectField("switchPosition",$csvLine[8],1,10); '</td>'."\n";
 
     if ($editOrCopy=='edit') { echo '<td align="center"><input type="submit" value="EDIT ACTION"></td>'."\n"; }
     if ($editOrCopy=='copy') { echo '<td align="center"><input type="submit" value="CREATE ACTION"></td>'."\n"; }
@@ -556,6 +560,7 @@ function printActionLineAsTableToDelete($csvLine)
     echo "<th>repeat action</th>\n";
     echo "<th>repeat every (days,...)</th>\n";
     echo "<th>last repeat</th>\n";
+    echo "<th>manual switch (optional)</th>\n";
     echo "<th>&nbsp;</th>\n";
     echo "</tr>\n";
     
@@ -576,6 +581,7 @@ function printActionLineAsTableToDelete($csvLine)
 		echo '<td>'.$csvLine[6].'</td>'."\n";
 		echo '<td>'; showDateAndTime($csvLine[7]); echo "</td>\n";
     }
+    echo '<td>'.$csvLine[8]."</td>\n";
     echo '<td><input type="submit" value="DELETE NOW"></td>'."\n";
     
     echo "</tr>\n";

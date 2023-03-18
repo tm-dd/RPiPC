@@ -2,7 +2,7 @@
 
     /*
     
-        Copyright (C) 2021, Thomas Mueller <><
+        Copyright (C) 2023, Thomas Mueller <><
         
         Redistribution and use in SOURCE and BINARY forms, with or without
         modification, are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
     // CSV settings   
     $csvDelimiterChar=';';
     $csvEnclosureChar='"';
-    $lastCsvLine="# rpipc,version=2\n";
+    $lastCsvLine="# rpipc,version=3\n";
 
     // security setting (set to 'y' to allow to change the commands)
     $allowManageRules='y';
