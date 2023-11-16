@@ -1,5 +1,5 @@
 "vnclisten";"xtightvncviewer";"-fullscreen -listen";" ";"/usr/bin/killall xtightvncviewer"
-"video";"omxplayer";"-b -live";" ";"/usr/bin/killall omxplayer.bin"
+"video";"omxplayer";"-b -live --adev both";" ";"/usr/bin/killall omxplayer.bin"
 "audio";"cvlc";" ";" ";"/usr/bin/killall vlc"
 "vncview";"xtightvncviewer";" -fullscreen";" ";"/usr/bin/killall xtightvncviewer"
 "www";"chromium-browser";"--force-device-scale-factor=1.00 --incognito --kiosk";" ";"/usr/bin/pkill chromium"
