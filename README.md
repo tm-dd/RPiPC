@@ -117,22 +117,14 @@ Optional to use AirPlay, install the AirPlay Server:
 
 Optional, protect the PHP scripts with HTACCESS (login and password):
 
-	root@raspberrypi:~# chmod 644 /var/www/html/rpipc/.htaccess
+
+	sudo htpasswd -B -c /var/www/html/.htpasswd admin
 	
-	root@raspberrypi:~# htpasswd -B -c /var/www/html/.htpasswd admin
-	New password: 
-	Re-type new password: 
-	Adding password for user admin
-	root@raspberrypi:~# 
+	sudo a2enmod rewrite
 	
-	root@raspberrypi:~# a2enmod rewrite
-	Enabling module rewrite.
-	To activate the new configuration, you need to run:
-	  systemctl restart apache2
-	root@raspberrypi:~# 
-		
-	root@raspberrypi:~# cp -a /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default_org.conf 
-	root@raspberrypi:~# vim /etc/apache2/sites-available/000-default.conf
+	sudo cp -a /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default_org.conf 
+	sudo vim /etc/apache2/sites-available/000-default.conf
+
 	root@raspberrypi:~# diff /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default_org.conf
 	14,21d13
 	< 	<Directory /var/www/html/rpipc/>
@@ -145,7 +137,7 @@ Optional, protect the PHP scripts with HTACCESS (login and password):
 	< 
 	root@raspberrypi:~# 
 	
-	root@raspberrypi:~# systemctl restart apache2
+	sudo systemctl restart apache2
 
 Optional, but usefull settings:
 
