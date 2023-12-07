@@ -1,7 +1,8 @@
 "vnclisten";"xtightvncviewer";"-fullscreen -listen";" ";"/usr/bin/killall xtightvncviewer"
-"video";"omxplayer";"-b -live --adev both";" ";"/usr/bin/killall omxplayer.bin"
+"video_omxplayer";"omxplayer";"-b -live --adev both";" ";"/usr/bin/killall omxplayer.bin"
+"video_vlc";"vlc";" -f";" ";"/usr/bin/killall vlc"
 "audio";"cvlc";" ";" ";"/usr/bin/killall vlc"
 "vncview";"xtightvncviewer";" -fullscreen";" ";"/usr/bin/killall xtightvncviewer"
 "www";"chromium-browser";"--force-device-scale-factor=1.00 --incognito --kiosk";" ";"/usr/bin/pkill chromium"
 "airplay";"/usr/local/bin/rpiplay";" -n RPiPC -b on -a hdmi";" ";"/usr/bin/killall rpiplay"
-# rpipc,version=1
+# rpipc,version=3
