@@ -29,33 +29,34 @@ Download and install Raspberry Pi OS with desktop and recommended software
 
 Download the scripts:
 
-    pi@raspberrypi:~ $ git clone https://github.com/tm-dd/RPiPC
+    git clone https://github.com/tm-dd/RPiPC
 
 Install the scheduler:
 
-    pi@raspberrypi:~ $ sudo cp -a RPiPC/usr/local/bin/scheduler.pl RPiPC/usr/local/bin/read_gpio_switch.py /usr/local/bin/
-    pi@raspberrypi:~ $ sudo cp -a RPiPC/etc/systemd/system/rpipc_scheduler.service RPiPC/etc/systemd/system/rpipc_switcher.service /etc/systemd/system/
-    pi@raspberrypi:~ $ sudo chown root:root /usr/local/bin/scheduler.pl /usr/local/bin/read_gpio_switch.py /etc/systemd/system/rpipc_scheduler.service /etc/systemd/system/rpipc_switcher.service
-    pi@raspberrypi:~ $ sudo chmod 755 /usr/local/bin/scheduler.pl /usr/local/bin/read_gpio_switch.py
-    pi@raspberrypi:~ $ sudo chmod 644 /etc/systemd/system/rpipc_scheduler.service /etc/systemd/system/rpipc_switcher.service
+    sudo cp -a RPiPC/usr/local/bin/scheduler.pl RPiPC/usr/local/bin/read_gpio_switch.py /usr/local/bin/
+    sudo cp -a RPiPC/etc/systemd/system/rpipc_scheduler.service RPiPC/etc/systemd/system/rpipc_switcher.service /etc/systemd/system/
+    sudo chown root:root /usr/local/bin/scheduler.pl /usr/local/bin/read_gpio_switch.py /etc/systemd/system/rpipc_scheduler.service /etc/systemd/system/rpipc_switcher.service
+    sudo chmod 755 /usr/local/bin/scheduler.pl /usr/local/bin/read_gpio_switch.py
+    sudo chmod 644 /etc/systemd/system/rpipc_scheduler.service /etc/systemd/system/rpipc_switcher.service
 
 If you want to use the PHP scripts with a local Apache 2 web server on the Raspberry Pi:
 
-    pi@raspberrypi:~ $ sudo apt install apache2 php
-    pi@raspberrypi:~ $ sudo systemctl restart apache2
+    sudo apt install apache2 php
+    sudo systemctl restart apache2
     
-    pi@raspberrypi:~ $ sudo cp -a RPiPC/var/www/html/rpipc /var/www/html/
-    pi@raspberrypi:~ $ sudo chown -R www-data:www-data /var/www/html/rpipc
-    pi@raspberrypi:~ $ sudo chmod 755 /var/www/html/rpipc
-    pi@raspberrypi:~ $ sudo chmod 644 /var/www/html/rpipc/*
+    sudo cp -a RPiPC/var/www/html/rpipc /var/www/html/
+    sudo chown -R www-data:www-data /var/www/html/rpipc
+    sudo chmod 755 /var/www/html/rpipc
+    sudo chmod 644 /var/www/html/rpipc/*
 
 OR, OPTIONAL (if the PHP scripts are running on a different host) you can use the following scripts:
 
-    pi@raspberrypi:~ $ sudo cp -a RPiPC/usr/local/bin/sync_configs.sh /usr/local/bin/
-    pi@raspberrypi:~ $ sudo chown root:root /usr/local/bin/sync_configs.sh
-    pi@raspberrypi:~ $ sudo chmod 755 /usr/local/bin/sync_configs.sh
+    sudo cp -a RPiPC/usr/local/bin/sync_configs.sh /usr/local/bin/
+    sudo chown root:root /usr/local/bin/sync_configs.sh
+    sudo chmod 755 /usr/local/bin/sync_configs.sh
 
-    pi@raspberrypi:~ $ sudo nano /usr/local/bin/sync_rpipc_csv_files.sh 
+    sudo nano /usr/local/bin/sync_rpipc_csv_files.sh 
+
     pi@raspberrypi:~ $ cat /usr/local/bin/sync_rpipc_csv_files.sh 
     #!/bin/bash
     /usr/local/bin/sync_configs.sh /home/pi/plan.csv https://test.example.org/pids/plan.csv 'login' 'Passw0rd'
@@ -63,10 +64,10 @@ OR, OPTIONAL (if the PHP scripts are running on a different host) you can use th
     exit 0
     pi@raspberrypi:~ $ 
 
-    pi@raspberrypi:~ $ sudo chmod 755 /usr/local/bin/sync_rpipc_csv_files.sh 
-    pi@raspberrypi:~ $ sudo chown root:root /usr/local/bin/sync_rpipc_csv_files.sh 
+    sudo chmod 755 /usr/local/bin/sync_rpipc_csv_files.sh 
+    sudo chown root:root /usr/local/bin/sync_rpipc_csv_files.sh 
 
-    pi@raspberrypi:~ $ sudo nano /usr/local/bin/scheduler.pl
+    sudo nano /usr/local/bin/scheduler.pl
     pi@raspberrypi:~ $ diff /usr/local/bin/scheduler.pl RPiPC/usr/local/bin/scheduler.pl
     43,44c43,44
     < my $csvFileToRead='/home/pi/plan.csv';                              # the csv file actions, parameters, start and stop times
@@ -78,21 +79,21 @@ OR, OPTIONAL (if the PHP scripts are running on a different host) you can use th
 
 Enable and start the scheduler:
 
-    pi@raspberrypi:~ $ sudo systemctl enable rpipc_scheduler
-    pi@raspberrypi:~ $ sudo systemctl start rpipc_scheduler
+    sudo systemctl enable rpipc_scheduler
+    sudo systemctl start rpipc_scheduler
 
 Optional, enable and start the switch analyser process:
 
-    pi@raspberrypi:~ $ sudo systemctl enable rpipc_switcher
-    pi@raspberrypi:~ $ sudo systemctl start rpipc_switcher
+    sudo systemctl enable rpipc_switcher
+    sudo systemctl start rpipc_switcher
 
 Set the audio output device for the example action type "audio":
 
-    pi@raspberrypi:~ $ sudo raspi-config
+    sudo raspi-config
 
 Install tightvncviewer to try/use the vlc examples action types:
 
-    pi@raspberrypi:~ $ sudo apt install xtightvncviewer
+    sudo apt install xtightvncviewer
 
 Optional to use AirPlay, install the AirPlay Server:
 
