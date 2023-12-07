@@ -31,6 +31,22 @@ Download the scripts:
 
     git clone https://github.com/tm-dd/RPiPC
 
+Edit the user and group in the scheduler.pl, if the local user and group is not pi
+
+    specialuser@raspberrypi:~ $ whoami
+    specialuser
+    specialuser@raspberrypi:~ $ 
+
+    vim RPiPC/etc/systemd/system/rpipc_scheduler.service
+    vim RPiPC/etc/systemd/system/rpipc_switcher.service
+
+    specialuser@raspberrypi:~ $ grep "User\|Group" RPiPC/etc/systemd/system/rpipc_scheduler.service RPiPC/etc/systemd/system/rpipc_switcher.service
+    RPiPC/etc/systemd/system/rpipc_scheduler.service:User=specialuser
+    RPiPC/etc/systemd/system/rpipc_scheduler.service:Group=specialuser
+    RPiPC/etc/systemd/system/rpipc_switcher.service:User=specialuser
+    RPiPC/etc/systemd/system/rpipc_switcher.service:Group=specialuser
+    specialuser@raspberrypi:~ $ 
+
 Install the scheduler:
 
     sudo cp -a RPiPC/usr/local/bin/scheduler.pl RPiPC/usr/local/bin/read_gpio_switch.py /usr/local/bin/
@@ -57,25 +73,25 @@ OR, OPTIONAL (if the PHP scripts are running on a different host) you can use th
 
     sudo nano /usr/local/bin/sync_rpipc_csv_files.sh 
 
-    pi@raspberrypi:~ $ cat /usr/local/bin/sync_rpipc_csv_files.sh 
+    specialuser@raspberrypi:~ $ cat /usr/local/bin/sync_rpipc_csv_files.sh 
     #!/bin/bash
     /usr/local/bin/sync_configs.sh /home/pi/plan.csv https://test.example.org/pids/plan.csv 'login' 'Passw0rd'
     /usr/local/bin/sync_configs.sh /home/pi/action-settings.csv https://test.example.org/pids/action-settings.csv 'login' 'Passw0rd'
     exit 0
-    pi@raspberrypi:~ $ 
+    specialuser@raspberrypi:~ $ 
 
     sudo chmod 755 /usr/local/bin/sync_rpipc_csv_files.sh 
     sudo chown root:root /usr/local/bin/sync_rpipc_csv_files.sh 
 
     sudo nano /usr/local/bin/scheduler.pl
-    pi@raspberrypi:~ $ diff /usr/local/bin/scheduler.pl RPiPC/usr/local/bin/scheduler.pl
+    specialuser@raspberrypi:~ $ diff /usr/local/bin/scheduler.pl RPiPC/usr/local/bin/scheduler.pl
     43,44c43,44
     < my $csvFileToRead='/home/pi/plan.csv';                              # the csv file actions, parameters, start and stop times
     < my $settingsFileToRead='/home/pi/action-settings.csv';              # a csv file with actions settings
     ---
     > my $csvFileToRead='/var/www/html/rpipc/plan.csv';                   # the csv file actions, parameters, start and stop times
     > my $settingsFileToRead='/var/www/html/rpipc/action-settings.csv';   # a csv file with actions settings
-    pi@raspberrypi:~ $
+    specialuser@raspberrypi:~ $
 
 Enable and start the scheduler:
 
