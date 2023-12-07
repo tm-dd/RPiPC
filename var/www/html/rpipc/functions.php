@@ -35,7 +35,7 @@ function readCsvFile($csvFilePath,$csvDelimiterChar,$csvEnclosureChar,$debug)
     // if the csv file not exists, stop now
     if (!(file_exists($csvFilePath))) { echo '<h1>ERROR: FILE "'.$csvFilePath.'" NOT EXISTS.<h1>'; exit(); }
         
-    @foundLine;                     		// array with the values of the current line
+    $foundLine=array();						// array with the values of the current line
     $valuesArray=array();					// declare the return array, to avoid error messages, if this is empty
     $lineNumber=0;                  		// the current line number in the while loop
 
